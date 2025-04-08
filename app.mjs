@@ -180,3 +180,16 @@ document.getElementById('importSource').addEventListener('change', function(even
     event.target.reset();
   });
 });
+
+document.getElementById('sortButton').addEventListener('click', function() { 
+    const criteria = document.getElementById('sortCriteria').value;
+    games.sort((a, b) => {
+        
+        if (criteria === 'personalRating' || criteria === 'playCount' || criteria === 'year') {
+            return a[criteria] - b[criteria];
+        }
+    
+        return a[criteria].toString().localeCompare(b[criteria].toString());
+    });
+    renderGames();
+});
