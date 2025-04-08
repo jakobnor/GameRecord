@@ -129,4 +129,36 @@ function renderGames() {
   
   document.addEventListener('DOMContentLoaded', () => {
   renderGames();
+
+  document.getElementById('addGameForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const title = document.getElementById('title').value.trim();
+    const designer = document.getElementById('designer').value.trim();
+    const artist = document.getElementById('artist').value.trim();
+    const publisher = document.getElementById('publisher').value.trim();
+    const year = parseInt(document.getElementById('year').value, 10);
+    const players = document.getElementById('players').value.trim();
+    const time = document.getElementById('time').value.trim();
+    const difficulty = document.getElementById('difficulty').value.trim();
+    const url = document.getElementById('url').value.trim();
+    const playCount = parseInt(document.getElementById('playCount').value, 10);
+    const personalRating = parseInt(document.getElementById('personalRating').value, 10);
+
+    if (!title || !designer || isNaN(year)) {
+      alert('Title, Designer, and Year are required.');
+      return;
+    }
+
+    const newGame = new Game(
+      title, designer, artist, publisher, year,
+      players, time, difficulty, url,
+      playCount, personalRating
+    );
+
+    saveGame(newGame);
+    games.push(newGame);
+    renderGames();
+    event.target.reset();
+  });
 });
