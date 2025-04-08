@@ -8,6 +8,20 @@
 </head>
 <body>
   <input type="file" id="importSource" />
+  <form id="newGameForm">
+    <input type="text" id="title" placeholder="Title" required>
+    <input type="text" id="designer" placeholder="Designer" required>
+    <input type="text" id="artist" placeholder="Artist">
+    <input type="text" id="publisher" placeholder="Publisher">
+    <input type="number" id="year" placeholder="Year" required>
+    <input type="text" id="players" placeholder="Players">
+    <input type="text" id="time" placeholder="Time">
+    <input type="text" id="difficulty" placeholder="Difficulty">
+    <input type="url" id="url" placeholder="URL">
+    <input type="number" id="playCount" placeholder="Play Count" value="0">
+    <input type="number" id="personalRating" placeholder="Rating" value="0">
+    <button type="submit">Add Game</button>
+  </form>
   <div id="gameList"></div>
 
   <script type="module" src="app.mjs"></script>
