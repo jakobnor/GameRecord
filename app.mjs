@@ -32,6 +32,85 @@ export function saveGame(game) {
     }
   }
   
+  function handleRatingChange(event) {
+    const title = event.target.dataset.title;
+    const newRating = parseInt(event.target.value, 10);
+
+    const game = games.find(g => g.title === title);
+    if (game) {
+        game.personalRating = newRating;
+        saveGame(game);
+        renderGames();
+    }
+}
+
+function handlePlayCountIncrement(event) {
+    const title = event.target.dataset.title;
+
+    const game = games.find(g => g.title === title);
+    if (game) {
+        game.playCount += 1;
+        saveGame(game);
+        renderGames();
+    }
+}
+function handleDeleteGame(event) {
+    const title = event.target.dataset.title;
+    
+    const gameIndex = games.findIndex(g => g.title === title);
+    if (gameIndex !== -1) {
+        
+        games.splice(gameIndex, 1);
+        
+        localStorage.removeItem('game_' + title);
+        
+        renderGames();
+    }
+}
+
+function renderGames() {
+    const gameList = document.getElementById('gameList');
+    gameList.innerHTML = ''; 
+    
+    games.forEach(game => {
+      
+      const gameDiv = document.createElement('div');
+      gameDiv.className = 'game-entry';
+      
+      const titleElem = document.createElement('h3');
+      titleElem.textContent = game.title;
+      
+      const detailsElem = document.createElement('p');
+      detailsElem.textContent = `Designer: ${game.designer} | Year: ${game.year} | Play Count: ${game.playCount}`;
+      
+      const ratingInput = document.createElement('input');
+      ratingInput.type = 'range';
+      ratingInput.min = '0';
+      ratingInput.max = '10';
+      ratingInput.value = game.personalRating;
+      ratingInput.dataset.title = game.title; 
+      ratingInput.addEventListener('input', handleRatingChange);
+
+      const updateButton = document.createElement('button');
+      updateButton.textContent = 'Update Rating/Play Count';
+      updateButton.dataset.title = game.title;
+      updateButton.addEventListener('click', handlePlayCountIncrement);
+
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.dataset.title = game.title;
+      deleteButton.addEventListener('click', handleDeleteGame);
+
+      gameDiv.appendChild(titleElem);
+      gameDiv.appendChild(detailsElem);
+      gameDiv.appendChild(ratingInput);
+      gameDiv.appendChild(updateButton);
+      gameDiv.appendChild(deleteButton);
+      
+      gameList.appendChild(gameDiv);
+    });
+  }
+
 console.log("App loaded and Game class imported");
 
 let games = getGames();
@@ -66,67 +145,6 @@ document.getElementById('importSource').addEventListener('change', function(even
     reader.readAsText(file);
 });
 
-function handleRatingChange(event) {
-    const title = event.target.dataset.title;
-    const newRating = parseInt(event.target.value, 10);
-
-    const game = games.find(g => g.title === title);
-    if (game) {
-        game.personalRating = newRating;
-        saveGame(game);
-        renderGames();
-    }
-}
-
-function handlePlayCountIncrement(event) {
-    const title = event.target.dataset.title;
-
-    const game = games.find(g => g.title === title);
-    if (game) {
-        game.playCount += 1;
-        saveGame(game);
-        renderGames();
-    }
-}
-
-function renderGames() {
-    const gameList = document.getElementById('gameList');
-    gameList.innerHTML = ''; 
-    
-    games.forEach(game => {
-      
-      const gameDiv = document.createElement('div');
-      gameDiv.className = 'game-entry';
-      
-      const titleElem = document.createElement('h3');
-      titleElem.textContent = game.title;
-      
-      const detailsElem = document.createElement('p');
-      detailsElem.textContent = `Designer: ${game.designer} | Year: ${game.year} | Play Count: ${game.playCount}`;
-      
-      const ratingInput = document.createElement('input');
-      ratingInput.type = 'range';
-      ratingInput.min = '0';
-      ratingInput.max = '10';
-      ratingInput.value = game.personalRating;
-      ratingInput.dataset.title = game.title; 
-      ratingInput.addEventListener('input', handleRatingChange);
-
-      const updateButton = document.createElement('button');
-      updateButton.textContent = 'Update Rating/Play Count';
-      updateButton.dataset.title = game.title;
-      updateButton.addEventListener('click', handlePlayCountIncrement);
-
-      gameDiv.appendChild(titleElem);
-      gameDiv.appendChild(detailsElem);
-      gameDiv.appendChild(ratingInput);
-      gameDiv.appendChild(updateButton);
-      
-      
-      gameList.appendChild(gameDiv);
-    });
-  }
-  
   document.addEventListener('DOMContentLoaded', () => {
   renderGames();
 
