@@ -68,48 +68,54 @@ function handleDeleteGame(event) {
     }
 }
 
+function addDynamicListeners() {
+ 
+  document.querySelectorAll('input[type="range"]').forEach(input => {
+    input.addEventListener('input', handleRatingChange);
+  });
+  
+  document.querySelectorAll('.play-btn').forEach(button => {
+    button.addEventListener('click', handlePlayCountIncrement);
+  });
+
+  document.querySelectorAll('.delete-btn').forEach(button => {
+    button.addEventListener('click', handleDeleteGame);
+  });
+}
+
 function renderGames() {
-    const gameList = document.getElementById('gameList');
-    gameList.innerHTML = ''; 
-    
-    games.forEach(game => {
-      
-      const gameDiv = document.createElement('div');
-      gameDiv.className = 'game-entry';
-      
-      const titleElem = document.createElement('h3');
-      titleElem.textContent = game.title;
-      
-      const detailsElem = document.createElement('p');
-      detailsElem.textContent = `Designer: ${game.designer} | Year: ${game.year} | Play Count: ${game.playCount}`;
-      
-      const ratingInput = document.createElement('input');
-      ratingInput.type = 'range';
-      ratingInput.min = '0';
-      ratingInput.max = '10';
-      ratingInput.value = game.personalRating;
-      ratingInput.dataset.title = game.title; 
-      ratingInput.addEventListener('input', handleRatingChange);
+  const gameList = document.getElementById('gameList');
+  gameList.innerHTML = '';
 
-      const updateButton = document.createElement('button');
-      updateButton.textContent = 'Update Rating/Play Count';
-      updateButton.dataset.title = game.title;
-      updateButton.addEventListener('click', handlePlayCountIncrement);
+  games.forEach(game => {
+    const gameDiv = document.createElement('div');
+    gameDiv.className = 'game-card';
+    gameDiv.innerHTML = `
+      <h3>${game.title}</h3>
+      <div class="meta">
+        <p>${game.designer} • ${game.year}</p>
+        <p>${game.players} players • ${game.time}</p>
+        <p>Difficulty: ${game.difficulty}</p>
+      </div>
+      <div class="controls">
+        <div class="play-counter">
+          <span>Plays: ${game.playCount}</span>
+          <button class="play-btn" data-title="${game.title}">+1</button>
+        </div>
+        <div class="rating-control">
+          <input type="range" min="0" max="10" 
+                 value="${game.personalRating}" 
+                 data-title="${game.title}">
+          <span>Rating: ${game.personalRating}</span>
+        </div>
+        <button class="delete-btn" data-title="${game.title}">Delete</button>
+      </div>
+    `;
+    gameList.appendChild(gameDiv);
+  });
 
-      const deleteButton = document.createElement('button');
-      deleteButton.textContent = 'Delete';
-      deleteButton.dataset.title = game.title;
-      deleteButton.addEventListener('click', handleDeleteGame);
-
-      gameDiv.appendChild(titleElem);
-      gameDiv.appendChild(detailsElem);
-      gameDiv.appendChild(ratingInput);
-      gameDiv.appendChild(updateButton);
-      gameDiv.appendChild(deleteButton);
-      
-      gameList.appendChild(gameDiv);
-    });
-  }
+  addDynamicListeners();
+}
 
 console.log("App loaded and Game class imported");
 
@@ -129,10 +135,10 @@ document.getElementById('importSource').addEventListener('change', function(even
         try {
             
             const gameArray = JSON.parse(jsonStr);
-            gameArray.forEach(game => {
-                
-                saveGame(game);
-            });
+            gameArray.forEach(gameData => {
+              const game = new Game(gameData);  
+              saveGame(game);  
+          });
             
             games = getGames();
             console.log("Games imported successfully:", games);
@@ -148,6 +154,7 @@ document.getElementById('importSource').addEventListener('change', function(even
   document.addEventListener('DOMContentLoaded', () => {
   renderGames();
 
+  
   document.getElementById('addGameForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -168,11 +175,19 @@ document.getElementById('importSource').addEventListener('change', function(even
       return;
     }
 
-    const newGame = new Game(
-      title, designer, artist, publisher, year,
-      players, time, difficulty, url,
-      playCount, personalRating
-    );
+    const newGame = new Game({
+      title: title,
+      designer: designer,
+      artist: artist,
+      publisher: publisher,
+      year: year,
+      players: players,
+      time: time,
+      difficulty: difficulty,
+      url: url,
+      playCount: playCount,
+      personalRating: personalRating
+    });
 
     saveGame(newGame);
     games.push(newGame);
