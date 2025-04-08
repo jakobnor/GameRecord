@@ -66,6 +66,29 @@ document.getElementById('importSource').addEventListener('change', function(even
     reader.readAsText(file);
 });
 
+function handleRatingChange(event) {
+    const title = event.target.dataset.title;
+    const newRating = parseInt(event.target.value, 10);
+
+    const game = games.find(g => g.title === title);
+    if (game) {
+        game.personalRating = newRating;
+        saveGame(game);
+        renderGames();
+    }
+}
+
+function handlePlayCountIncrement(event) {
+    const title = event.target.dataset.title;
+
+    const game = games.find(g => g.title === title);
+    if (game) {
+        game.playCount += 1;
+        saveGame(game);
+        renderGames();
+    }
+}
+
 function renderGames() {
     const gameList = document.getElementById('gameList');
     gameList.innerHTML = ''; 
@@ -87,11 +110,13 @@ function renderGames() {
       ratingInput.max = '10';
       ratingInput.value = game.personalRating;
       ratingInput.dataset.title = game.title; 
-      
+      ratingInput.addEventListener('input', handleRatingChange);
+
       const updateButton = document.createElement('button');
       updateButton.textContent = 'Update Rating/Play Count';
       updateButton.dataset.title = game.title;
-      
+      updateButton.addEventListener('click', handlePlayCountIncrement);
+
       gameDiv.appendChild(titleElem);
       gameDiv.appendChild(detailsElem);
       gameDiv.appendChild(ratingInput);
@@ -102,5 +127,6 @@ function renderGames() {
     });
   }
   
-  
+  document.addEventListener('DOMContentLoaded', () => {
   renderGames();
+});
