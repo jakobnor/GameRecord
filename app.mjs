@@ -65,3 +65,42 @@ document.getElementById('importSource').addEventListener('change', function(even
 
     reader.readAsText(file);
 });
+
+function renderGames() {
+    const gameList = document.getElementById('gameList');
+    gameList.innerHTML = ''; 
+    
+    games.forEach(game => {
+      
+      const gameDiv = document.createElement('div');
+      gameDiv.className = 'game-entry';
+      
+      const titleElem = document.createElement('h3');
+      titleElem.textContent = game.title;
+      
+      const detailsElem = document.createElement('p');
+      detailsElem.textContent = `Designer: ${game.designer} | Year: ${game.year} | Play Count: ${game.playCount}`;
+      
+      const ratingInput = document.createElement('input');
+      ratingInput.type = 'range';
+      ratingInput.min = '0';
+      ratingInput.max = '10';
+      ratingInput.value = game.personalRating;
+      ratingInput.dataset.title = game.title; 
+      
+      const updateButton = document.createElement('button');
+      updateButton.textContent = 'Update Rating/Play Count';
+      updateButton.dataset.title = game.title;
+      
+      gameDiv.appendChild(titleElem);
+      gameDiv.appendChild(detailsElem);
+      gameDiv.appendChild(ratingInput);
+      gameDiv.appendChild(updateButton);
+      
+      
+      gameList.appendChild(gameDiv);
+    });
+  }
+  
+  
+  renderGames();
